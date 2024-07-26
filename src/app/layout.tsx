@@ -5,6 +5,7 @@ import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import { TopNav } from "./__components/top-nav";
+import { ThemeProvider } from "~/lib/ui/theme-provider";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -24,8 +25,15 @@ export default function RootLayout({
     <html lang="en" className={`${fontSans.variable}`}>
       <body>
         <TRPCReactProvider>
-          <TopNav />
-          {children}
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <TopNav />
+            {children}
+          </ThemeProvider>
         </TRPCReactProvider>
       </body>
     </html>
