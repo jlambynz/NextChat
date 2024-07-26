@@ -1,14 +1,15 @@
 import "~/styles/globals.css";
 
-import { Inter as FontSans } from "next/font/google"
+import { Inter as FontSans } from "next/font/google";
 import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
+import { TopNav } from "./__components/top-nav";
 
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
-})
+});
 
 export const metadata: Metadata = {
   title: "Next Chat",
@@ -22,7 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${fontSans.variable}`}>
       <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <TRPCReactProvider>
+          <TopNav />
+          {children}
+        </TRPCReactProvider>
       </body>
     </html>
   );
