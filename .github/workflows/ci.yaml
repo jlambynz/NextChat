@@ -1,0 +1,27 @@
+name: ci
+run-name: CI
+on: [push]
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: "Create .env"
+        run: |
+          : # create a .env with dummy values as linter checks to ensure all .env options have values
+          touch .env
+          echo DATABASE_URL="postgresql://postgres:postgres@localhost:5432/next-chat" >> .env
+          echo NEXTAUTH_SECRET="oaU83hzBmhYDTe7MIDhJk2uJwB8SVgl+TPz1XSB51Q8=" >> .env
+          echo NEXTAUTH_URL="http://localhost:3000" >> .env
+          echo GOOGLE_CLIENT_ID="123.apps.googleusercontent.com" >> .env
+          echo GOOGLE_CLIENT_SECRET="oaU83hzBmhYDTe7MIDhJk2uJwB8SVgl+TPz1XSB51Q8=" >> .env
+          cat .env
+      - name: "Install deps"
+        run: npm install
+      - name: "Run CI checks"
+        run: |
+          npm run lint
+          npm run build
