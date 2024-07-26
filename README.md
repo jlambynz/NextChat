@@ -6,8 +6,8 @@ Personal project exploring [T3 stack](https://github.com/t3-oss/create-t3-app) (
 - Obtain OAuth 2.0 credentials (follow [docs provided by NextJS](https://next-auth.js.org/providers/google) for more information/setup)
 
 ## Running locally
-1. Complete environment variables in [.env](.env)
-2. Create database name as configured in [.env](.env) in step 1
+1. Create `.env` based on [.env.example](.env.example)
+2. Create database name as configured in `.env` in step 1
 2. Instantiate database tables by running `npm run db:push`
 3. Start development server with `npm run dev` and access via `http://localhost:3000` by default
 
