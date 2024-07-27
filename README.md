@@ -1,4 +1,4 @@
-<span style="font-size:2rem; font-weight: 500"> 🚧 Under construction 🚧</span>
+### 🚧 Under construction 🚧
 
 # NextChat
 
