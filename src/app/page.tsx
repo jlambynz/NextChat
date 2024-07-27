@@ -1,9 +1,5 @@
-import { HydrateClient } from "~/trpc/server";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
-  return (
-    <HydrateClient>
-      <main></main>
-    </HydrateClient>
-  );
+  redirect("/chat");
 }
