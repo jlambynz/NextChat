@@ -5,10 +5,10 @@ export function MaxWidthContainer({
   className,
   children,
   ...rest
-}: HTMLProps<HTMLDivElement>) {
+}: HTMLProps<HTMLDivElement> & { sizes?: "sm" | "md" }) {
   return (
     <div
-      className={cn("mx-auto flex w-full max-w-8xl p-4", className)}
+      className={cn("mx-auto flex w-full max-w-5xl p-4", className)}
       {...rest}
     >
       {children}
