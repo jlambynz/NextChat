@@ -22,8 +22,12 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${fontSans.variable}`} suppressHydrationWarning>
-      <body>
+    <html
+      lang="en"
+      className={`${fontSans.variable} h-full`}
+      suppressHydrationWarning
+    >
+      <body className="h-full">
         <TRPCReactProvider>
           <ThemeProvider
             attribute="class"
@@ -31,8 +35,10 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <TopNav />
-            {children}
+            <main className="flex h-full flex-col">
+              <TopNav />
+              {children}
+            </main>
           </ThemeProvider>
         </TRPCReactProvider>
       </body>
