@@ -4,13 +4,14 @@ import { Typography } from "~/lib/ui/typography";
 import { Avatar } from "./avatar";
 import { getServerAuthSession } from "~/server/auth";
 import { ThemeModeToggle } from "./theme-mode-toggle";
+import { MaxWidthContainer } from "~/lib/ui/max-width-container";
 
 export async function TopNav() {
   const session = await getServerAuthSession();
 
   return (
-    <nav className="flex w-full border-b-2 p-4">
-      <div className="max-w-8xl mx-auto flex w-full justify-between">
+    <nav className="flex w-full border-b-2">
+      <MaxWidthContainer className="justify-between">
         <Typography variant="h1" as="h1">
           Next Chat
         </Typography>
@@ -29,7 +30,7 @@ export async function TopNav() {
             </Button>
           )}
         </div>
-      </div>
+      </MaxWidthContainer>
     </nav>
   );
 }
