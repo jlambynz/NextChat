@@ -18,6 +18,7 @@ jobs:
           echo NEXTAUTH_URL="http://localhost:3000" >> .env
           echo GOOGLE_CLIENT_ID="123.apps.googleusercontent.com" >> .env
           echo GOOGLE_CLIENT_SECRET="oaU83hzBmhYDTe7MIDhJk2uJwB8SVgl+TPz1XSB51Q8=" >> .env
+          echo OPENAI_API_KEY="sk-123" >> .env
           cat .env
       - name: "Install deps"
         run: npm install

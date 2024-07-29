@@ -1,5 +1,7 @@
+import { type RouterOutputs } from "~/trpc/react";
+
 type MessagesProps = {
-  messages: ChatMessage[];
+  messages: RouterOutputs["openai"]["getMessages"];
 };
 
 export function Messages({ messages }: MessagesProps) {
@@ -24,38 +26,32 @@ export function Message({ message }: MessageProps) {
   );
 }
 
-function messageColor(messageType: ChatMessage["type"]): string {
+function messageColor(
+  messageType: RouterOutputs["openai"]["getMessages"][number]["type"],
+): string {
   switch (messageType) {
     case "user-sent":
       return "bg-green-500";
     case "llm-response":
       return "bg-blue-500";
+    default:
+      return "bg-gray-500";
   }
 }
 
-function messageAlignment(messageType: ChatMessage["type"]): string {
+function messageAlignment(
+  messageType: RouterOutputs["openai"]["getMessages"][number]["type"],
+): string {
   switch (messageType) {
     case "user-sent":
       return "justify-end";
     case "llm-response":
       return "justify-start";
+    default:
+      return "justify-start";
   }
 }
 
-type UserSentChatMessage = {
-  type: "user-sent";
-  id: string;
-  message: string;
-};
-
-type LLMChatResponse = {
-  type: "llm-response";
-  id: string;
-  message: string;
-};
-
-export type ChatMessage = UserSentChatMessage | LLMChatResponse;
-
 type MessageProps = {
-  message: ChatMessage;
+  message: RouterOutputs["openai"]["getMessages"][number];
 };
