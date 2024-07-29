@@ -24,7 +24,7 @@ export function UserInput() {
           value={text}
           rows={1}
           placeholder="Type a message..."
-          className="max-h-32 min-h-max resize-none focus:ring-0 focus-visible:ring-0"
+          className="max-h-32 min-h-max resize-none"
           style={{
             // @ts-expect-error Experimental CSS property not available in all browsers: https://developer.mozilla.org/en-US/docs/Web/CSS/field-sizing
             // TODO: Either replace with a method more widely supported if it remains experimental for some time
