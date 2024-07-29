@@ -5,11 +5,17 @@ import { useState, type FormEvent } from "react";
 import { Button } from "~/lib/ui/button";
 import { Textarea } from "~/lib/ui/textarea";
 
-export function UserInput() {
+type Props = {
+  onSubmit: (message: string) => void;
+};
+
+export function UserInput({ onSubmit }: Props) {
   const [text, setText] = useState<string>("");
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    onSubmit(text);
+    setText("");
   }
 
   return (
