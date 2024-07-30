@@ -1,4 +1,5 @@
 ### 🚧 Under construction 🚧
+Check closed pull requests with `demonstrations` to see demonstrations as the app is developed ([shortcut](https://github.com/jlambynz/NextChat/pulls?q=is%3Apr+is%3Aclosed+demonstration))
 
 # NextChat
 
