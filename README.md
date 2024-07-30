@@ -8,6 +8,7 @@ Personal project exploring [T3 stack](https://github.com/t3-oss/create-t3-app) (
 
 - PostgreSQL instance ([start-database.sh](start-database.sh) is available for convenience to run a docker instance of PostgreSQL)
 - Obtain OAuth 2.0 credentials (follow [docs provided by NextJS](https://next-auth.js.org/providers/google) for more information/setup)
+- OpenAI API Key (https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key)
 
 ## Running locally
 
