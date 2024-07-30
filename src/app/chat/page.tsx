@@ -1,35 +1,30 @@
 "use client";
 
-import { MaxWidthContainer } from "~/lib/ui/max-width-container";
-import { UserInput } from "./_components/user-input";
-import { Messages } from "./_components/message";
+import { UserInputPanel } from "./_components/user-input-panel";
+import { MessageBoard } from "./_components/message-board";
 import { api } from "~/trpc/react";
+import { createOptimisticReponse } from "./_components/utils";
 
 export default function Chat() {
   const utils = api.useUtils();
 
   const { data: messages } = api.openai.getMessages.useQuery();
-  const { mutate } = api.openai.sendChatMessage.useMutation({
-    onSuccess: async () => {
-      await utils.openai.getMessages.invalidate();
-    },
-  });
-
-  async function handleSubmit(message: string) {
-    mutate({ message });
-  }
+  const { mutate: sendMessage, isPending: responsePending } =
+    api.openai.sendChatMessage.useMutation({
+      onMutate: async ({ message }) => createOptimisticReponse(utils, message),
+      onSettled: () => utils.openai.getMessages.invalidate(),
+    });
 
   return (
     <>
-      <div className="flex flex-1 flex-col overflow-auto">
-        <MaxWidthContainer className="flex flex-1 flex-col">
-          <Messages messages={messages ?? []} />
-        </MaxWidthContainer>
-      </div>
-
-      <MaxWidthContainer>
-        <UserInput onSubmit={handleSubmit} />
-      </MaxWidthContainer>
+      <MessageBoard
+        messages={messages ?? []}
+        responsePending={responsePending}
+      />
+      <UserInputPanel
+        responsePending={responsePending}
+        onSubmit={(message) => sendMessage({ message })}
+      />
     </>
   );
 }
