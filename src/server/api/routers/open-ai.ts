@@ -20,40 +20,43 @@ export const openAIRouter = createTRPCRouter({
         status: "success",
       });
 
-      let llmReponseMessage = "";
+      const fullConversation = await ctx.db.query.messages.findMany({
+        where: ({ userId, status }, { eq, and, notLike }) =>
+          and(eq(userId, ctx.session.user.id), notLike(status, "failed")),
+        orderBy: ({ createdAt }, { asc }) => asc(createdAt),
+      });
+
       try {
-        const response = await ctx.openai.chat.completions.create({
+        const llmResponse = await ctx.openai.chat.completions.create({
+          // TODO: would be nice to make this a configurable setting in the UI
           model: "gpt-3.5-turbo",
-          messages: [{ role: "system", content: input.message }],
+          messages: fullConversation.map((c) => ({
+            role: c.type === "user-sent" ? "user" : "assistant",
+            content: c.message,
+          })),
         });
 
-        llmReponseMessage = response.choices[0]?.message.content ?? "";
+        return await ctx.db
+          .insert(messages)
+          .values({
+            userId: ctx.session.user.id,
+            message: llmResponse.choices[0]?.message.content ?? "",
+            type: "llm-response",
+            status: "success",
+          })
+          .returning();
       } catch (error) {
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : "Unexpected error retrieving LLM reponse";
-
         await ctx.db.insert(messages).values({
           userId: ctx.session.user.id,
-          message: errorMessage,
+          message:
+            error instanceof Error
+              ? error.message
+              : "Unexpected error retrieving LLM reponse",
           type: "llm-response",
           status: "failed",
         });
 
         throw error;
       }
-
-      const res = await ctx.db
-        .insert(messages)
-        .values({
-          userId: ctx.session.user.id,
-          message: llmReponseMessage,
-          type: "llm-response",
-          status: "success",
-        })
-        .returning();
-
-      return res;
     }),
 });
