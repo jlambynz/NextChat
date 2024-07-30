@@ -66,7 +66,7 @@ export function MessageBoard({ messages, responsePending }: Props) {
           variant="outline"
           size="icon"
           className="absolute bottom-16 right-[50%] animate-bounce rounded-[50%]"
-          onClick={() => scrollToBottom()}
+          onClick={() => scrollToBottom("smooth")}
         >
           <ChevronDown />
         </Button>
