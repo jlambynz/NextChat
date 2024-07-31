@@ -5,15 +5,21 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "~/lib/ui/button";
 import { MaxWidthContainer } from "~/lib/ui/max-width-container";
 import { type RouterOutputs } from "~/trpc/react";
+import { messageFromStreamingResponse } from "./utils";
 
 // TODO: container overflow causes very slight misalignment of content due to the scrollbar. Would be nice to detect and adjust for this
 
 type Props = {
   messages: RouterOutputs["openai"]["getMessages"];
+  streamingResponse: string;
   responsePending: boolean;
 };
 
-export function MessageBoard({ messages, responsePending }: Props) {
+export function MessageBoard({
+  messages,
+  streamingResponse,
+  responsePending,
+}: Props) {
   const [showScrollDown, setShowScrollDown] = useState<boolean>(false);
   const overflowContainerRef = useRef<HTMLDivElement>(null);
 
@@ -28,7 +34,7 @@ export function MessageBoard({ messages, responsePending }: Props) {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, streamingResponse]);
 
   useEffect(() => {
     if (!overflowContainerRef.current) return;
@@ -53,11 +59,17 @@ export function MessageBoard({ messages, responsePending }: Props) {
     >
       <MaxWidthContainer className="flex flex-1 flex-col">
         <div className="flex flex-col gap-6">
-          {messages?.map((message) => (
+          {messages.map((message) => (
             <Message key={message.id} message={message} />
           ))}
 
           {responsePending && <MessagePending type="llm-response" />}
+
+          {streamingResponse && (
+            <Message
+              message={messageFromStreamingResponse(streamingResponse)}
+            />
+          )}
         </div>
       </MaxWidthContainer>
 
