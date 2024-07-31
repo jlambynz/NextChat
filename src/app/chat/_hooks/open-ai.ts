@@ -3,6 +3,8 @@ import { api } from "~/trpc/react";
 import { createOptimisticReponse } from "../_components/utils";
 
 export function useOpenAIChatMutation() {
+  const [isProcessingResponse, setIsProcessingResponse] =
+    useState<boolean>(false);
   const [isPendingResponse, setIsPendingResponse] = useState<boolean>(false);
   const [streamingResponse, setStreamingResponse] = useState<string>("");
 
@@ -17,15 +19,22 @@ export function useOpenAIChatMutation() {
       void utils.openai.getMessages.invalidate();
     },
     onSuccess: async (responseChunks) => {
+      setIsProcessingResponse(true);
       for await (const chunk of responseChunks) {
         setIsPendingResponse(false);
         setStreamingResponse((cur) => cur + chunk);
       }
 
       await utils.openai.getMessages.invalidate();
+      setIsProcessingResponse(false);
       setStreamingResponse("");
     },
   });
 
-  return { sendMessage, streamingResponse, isPendingResponse };
+  return {
+    sendMessage,
+    streamingResponse,
+    isPendingResponse,
+    isProcessingResponse,
+  };
 }
