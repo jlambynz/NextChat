@@ -1,5 +1,5 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
-import { openAIRouter } from "./routers/open-ai";
+import { openAIChatRouter } from "./routers/open-ai";
 
 /**
  * This is the primary router for your server.
@@ -7,7 +7,7 @@ import { openAIRouter } from "./routers/open-ai";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  openai: openAIRouter,
+  openai: openAIChatRouter,
 });
 
 // export type definition of API

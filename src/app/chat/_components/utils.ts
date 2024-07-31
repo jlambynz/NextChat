@@ -1,4 +1,4 @@
-import { type api } from "~/trpc/react";
+import type { RouterOutputs, api } from "~/trpc/react";
 
 export function createOptimisticReponse(
   trpcUtils: ReturnType<(typeof api)["useUtils"]>,
@@ -18,4 +18,15 @@ export function createOptimisticReponse(
   ]);
 
   return { previousMessages };
+}
+
+export function messageFromStreamingResponse(
+  streamingResponse: string,
+): RouterOutputs["openai"]["getMessages"][number] {
+  return {
+    id: "streaming-response",
+    type: "llm-response",
+    status: "success",
+    message: streamingResponse,
+  };
 }

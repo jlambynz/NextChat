@@ -7,16 +7,16 @@ import { MaxWidthContainer } from "~/lib/ui/max-width-container";
 import { Textarea } from "~/lib/ui/textarea";
 
 type Props = {
-  responsePending?: boolean;
+  disabled?: boolean;
   onSubmit: (message: string) => void;
 };
 
-export function UserInputPanel({ responsePending = false, onSubmit }: Props) {
+export function UserInputPanel({ disabled = false, onSubmit }: Props) {
   const [text, setText] = useState<string>("");
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!text || responsePending) return;
+    if (!text || disabled) return;
 
     onSubmit(text);
     setText("");
@@ -33,6 +33,7 @@ export function UserInputPanel({ responsePending = false, onSubmit }: Props) {
           <Textarea
             autoFocus
             value={text}
+            disabled={disabled}
             rows={1}
             placeholder="Type a message..."
             className="max-h-32 min-h-max resize-none"
@@ -49,7 +50,7 @@ export function UserInputPanel({ responsePending = false, onSubmit }: Props) {
             }}
             onChange={(e) => setText(e.target.value)}
           />
-          <Button type="submit" disabled={responsePending}>
+          <Button type="submit" disabled={disabled}>
             <span className="hidden sm:block">Send</span>
             <SendHorizonal className="ml-0 size-4 sm:ml-2" />
           </Button>

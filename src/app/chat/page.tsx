@@ -3,26 +3,22 @@
 import { UserInputPanel } from "./_components/user-input-panel";
 import { MessageBoard } from "./_components/message-board";
 import { api } from "~/trpc/react";
-import { createOptimisticReponse } from "./_components/utils";
+import { useOpenAIChatMutation } from "./_hooks/open-ai";
 
 export default function Chat() {
-  const utils = api.useUtils();
-
   const { data: messages } = api.openai.getMessages.useQuery();
-  const { mutate: sendMessage, isPending: responsePending } =
-    api.openai.sendChatMessage.useMutation({
-      onMutate: async ({ message }) => createOptimisticReponse(utils, message),
-      onSettled: () => utils.openai.getMessages.invalidate(),
-    });
+  const { sendMessage, streamingResponse, isPendingResponse } =
+    useOpenAIChatMutation();
 
   return (
     <>
       <MessageBoard
         messages={messages ?? []}
-        responsePending={responsePending}
+        streamingResponse={streamingResponse}
+        responsePending={isPendingResponse}
       />
       <UserInputPanel
-        responsePending={responsePending}
+        disabled={isPendingResponse}
         onSubmit={(message) => sendMessage({ message })}
       />
     </>
