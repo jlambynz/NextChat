@@ -7,8 +7,12 @@ import { useOpenAIChatMutation } from "./_hooks/open-ai";
 
 export default function Chat() {
   const { data: messages } = api.openai.getMessages.useQuery();
-  const { sendMessage, streamingResponse, isPendingResponse } =
-    useOpenAIChatMutation();
+  const {
+    sendMessage,
+    streamingResponse,
+    isPendingResponse,
+    isProcessingResponse,
+  } = useOpenAIChatMutation();
 
   return (
     <>
@@ -18,7 +22,7 @@ export default function Chat() {
         responsePending={isPendingResponse}
       />
       <UserInputPanel
-        disabled={isPendingResponse}
+        disabled={isPendingResponse || isProcessingResponse}
         onSubmit={(message) => sendMessage({ message })}
       />
     </>

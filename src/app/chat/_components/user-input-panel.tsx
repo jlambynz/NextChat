@@ -1,7 +1,7 @@
 "use client";
 
 import { SendHorizonal } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "~/lib/ui/button";
 import { MaxWidthContainer } from "~/lib/ui/max-width-container";
 import { Textarea } from "~/lib/ui/textarea";
@@ -13,6 +13,7 @@ type Props = {
 
 export function UserInputPanel({ disabled = false, onSubmit }: Props) {
   const [text, setText] = useState<string>("");
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -21,6 +22,10 @@ export function UserInputPanel({ disabled = false, onSubmit }: Props) {
     onSubmit(text);
     setText("");
   }
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  });
 
   return (
     <MaxWidthContainer>
@@ -32,6 +37,7 @@ export function UserInputPanel({ disabled = false, onSubmit }: Props) {
         >
           <Textarea
             autoFocus
+            ref={inputRef}
             value={text}
             disabled={disabled}
             rows={1}
@@ -49,6 +55,9 @@ export function UserInputPanel({ disabled = false, onSubmit }: Props) {
               }
             }}
             onChange={(e) => setText(e.target.value)}
+            onBlur={() => {
+              inputRef.current?.focus();
+            }}
           />
           <Button type="submit" name="submit-message" disabled={disabled}>
             <span className="hidden sm:block">Send</span>
