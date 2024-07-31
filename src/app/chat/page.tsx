@@ -1,7 +1,7 @@
 "use client";
 
 import { UserInputPanel } from "./_components/user-input-panel";
-import { MessageBoard } from "./_components/message-board";
+import { MessageBoard } from "./_components/message-board/message-board";
 import { api } from "~/trpc/react";
 import { useOpenAIChatMutation } from "./_hooks/open-ai";
 

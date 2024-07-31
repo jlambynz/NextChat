@@ -19,9 +19,9 @@ type Props = {
 export function Avatar({ imageUrl, fallback }: Props) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger name="avatar">
         <AvatarComponent>
-          <AvatarImage src={imageUrl} />
+          <AvatarImage src={imageUrl} alt="user-avatar-img" />
           <AvatarFallback>{fallback}</AvatarFallback>
         </AvatarComponent>
       </DropdownMenuTrigger>
