@@ -3,7 +3,9 @@ Check closed pull requests with "demonstrations" in the title to see demonstrati
 
 # NextChat
 
-Personal project exploring [T3 stack](https://github.com/t3-oss/create-t3-app) (NextJS, tRPC, TypeScript, Tailwind, Drizzle, NextAuth) with Open AI integration to recreate a Chat-GPT-like experience
+Personal project exploring [T3 stack](https://github.com/t3-oss/create-t3-app) (NextJS, tRPC, TypeScript, Tailwind, Drizzle, NextAuth) with Open AI integration to recreate a Chat GPT-like experience
+
+![asking question demonstration](public/demo/ask_a-question.gif)
 
 ## Prerequesites
 
