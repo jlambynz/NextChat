@@ -50,7 +50,7 @@ export function UserInputPanel({ disabled = false, onSubmit }: Props) {
             }}
             onChange={(e) => setText(e.target.value)}
           />
-          <Button type="submit" disabled={disabled}>
+          <Button type="submit" name="submit-message" disabled={disabled}>
             <span className="hidden sm:block">Send</span>
             <SendHorizonal className="ml-0 size-4 sm:ml-2" />
           </Button>
