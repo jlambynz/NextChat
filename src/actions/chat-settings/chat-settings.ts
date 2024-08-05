@@ -11,3 +11,7 @@ export async function updateChatSettings(
   const validatedSettings = await validateSettingsInput(settings);
   await api.openai.updateChatSettings(validatedSettings);
 }
+
+export async function clearChatHistory() {
+  await api.openai.clearChatHistory();
+}

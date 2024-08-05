@@ -3,6 +3,7 @@ import { createTRPCRouter, protectedProcedure } from "../../trpc";
 import { chatSettings, messages } from "~/server/db/schema";
 import { type ChatMessage, ChatMessageStatus, ChatMessageType } from "./types";
 import { type ProtectedCtx } from "../../types";
+import { eq } from "drizzle-orm";
 
 export const openAIChatRouter = createTRPCRouter({
   getChatMessages: protectedProcedure.query(async ({ ctx }) =>
@@ -78,6 +79,14 @@ export const openAIChatRouter = createTRPCRouter({
         await upsertChatModel(ctx, input.model);
       }
     }),
+
+  clearChatHistory: protectedProcedure.mutation(async ({ ctx }) => {
+    const out = await ctx.db
+      .delete(messages)
+      .where(eq(messages.userId, ctx.session.user.id));
+    console.log("chat cleared");
+    return out;
+  }),
 });
 
 async function getChatMessages(ctx: ProtectedCtx) {
