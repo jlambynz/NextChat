@@ -2,7 +2,7 @@ import { type RouterOutputs } from "~/trpc/react";
 import { MessageAlignment } from "./message-alignment";
 
 type Props = {
-  type: RouterOutputs["openai"]["getMessages"][number]["type"];
+  type: RouterOutputs["openai"]["getChatMessages"][number]["type"];
 };
 
 export function MessagePending({ type }: Props) {

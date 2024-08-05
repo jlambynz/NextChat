@@ -1,20 +1,21 @@
 import { TriangleAlert } from "lucide-react";
+import { ChatMessageType } from "~/server/api/routers/open-ai/types";
 import { type RouterOutputs } from "~/trpc/react";
 
 type Props = {
-  type?: RouterOutputs["openai"]["getMessages"][number]["type"];
+  type?: RouterOutputs["openai"]["getChatMessages"][number]["type"];
   error?: boolean;
   children: React.ReactNode;
 };
 
 export function MessageBubble({ type, error, children }: Props) {
   function messageColorByType(
-    messageType?: RouterOutputs["openai"]["getMessages"][number]["type"],
+    messageType?: RouterOutputs["openai"]["getChatMessages"][number]["type"],
   ): string {
     switch (messageType) {
-      case "user-sent":
+      case ChatMessageType.UserSent:
         return "bg-blue-700 text-white";
-      case "llm-response":
+      case ChatMessageType.LLMResponse:
         return "bg-slate-100 text-black";
       default:
         return "bg-gray-500";

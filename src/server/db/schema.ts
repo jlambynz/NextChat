@@ -34,6 +34,9 @@ export const users = createTable("user", {
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
+  sessions: many(sessions),
+  messages: many(messages),
+  chatSettings: many(chatSettings),
 }));
 
 export const accounts = createTable(
@@ -125,3 +128,23 @@ export const messages = createTable("message", {
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
 });
+
+export const messagesRelations = relations(messages, ({ one }) => ({
+  user: one(users, { fields: [messages.userId], references: [users.id] }),
+}));
+
+export const chatSettings = createTable("chat_settings", {
+  id: varchar("id", { length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: varchar("user_id", { length: 255 })
+    .notNull()
+    .unique()
+    .references(() => users.id),
+  model: varchar("model", { length: 255 }).notNull(),
+});
+
+export const chatSettingsRelations = relations(chatSettings, ({ one }) => ({
+  user: one(users, { fields: [chatSettings.userId], references: [users.id] }),
+}));

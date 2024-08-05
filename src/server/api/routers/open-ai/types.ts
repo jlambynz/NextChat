@@ -1,5 +1,11 @@
-export type ChatMessageType = "user-sent" | "llm-response";
-export type ChatMessageStatus = "success" | "failed";
+export enum ChatMessageType {
+  UserSent = "user-sent",
+  LLMResponse = "llm-response",
+}
+export enum ChatMessageStatus {
+  Success = "success",
+  Failed = "failed",
+}
 
 export type ChatMessage = {
   id: string;

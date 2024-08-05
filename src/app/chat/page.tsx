@@ -6,7 +6,7 @@ import { api } from "~/trpc/react";
 import { useOpenAIChatMutation } from "./_hooks/open-ai";
 
 export default function Chat() {
-  const { data: messages } = api.openai.getMessages.useQuery();
+  const { data: messages } = api.openai.getChatMessages.useQuery();
   const {
     sendMessage,
     streamingResponse,

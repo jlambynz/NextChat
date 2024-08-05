@@ -1,23 +1,22 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../../trpc";
-import { messages } from "~/server/db/schema";
-import type { ChatMessage, ChatMessageStatus, ChatMessageType } from "./types";
+import { chatSettings, messages } from "~/server/db/schema";
+import { type ChatMessage, ChatMessageStatus, ChatMessageType } from "./types";
+import { DEFAULT_CHAT_MODEL } from "./utils";
+import { type ProtectedCtx } from "../../types";
 
 export const openAIChatRouter = createTRPCRouter({
-  getMessages: protectedProcedure.query(async ({ ctx }) => {
-    const chatMessages = await ctx.db.query.messages.findMany({
-      where: ({ userId }, { eq }) => eq(userId, ctx.session.user.id),
-      orderBy: ({ createdAt }, { asc }) => asc(createdAt),
-    });
+  getChatMessages: protectedProcedure.query(async ({ ctx }) =>
+    getChatMessages(ctx),
+  ),
 
-    return chatMessages.map<ChatMessage>((m) => ({
-      id: m.id,
-      // Drizzle doesn't support strict typing on columns. Cast to avoid handling throughout the app
-      type: m.type as ChatMessageType,
-      status: m.status as ChatMessageStatus,
-      message: m.message,
-    }));
-  }),
+  getChatModels: protectedProcedure.query(async ({ ctx }) =>
+    getChatModels(ctx),
+  ),
+
+  getChatSettings: protectedProcedure.query(async ({ ctx }) =>
+    getChatSettings(ctx),
+  ),
 
   sendChatMessage: protectedProcedure
     .input(z.object({ message: z.string().min(1) }))
@@ -25,22 +24,20 @@ export const openAIChatRouter = createTRPCRouter({
       await ctx.db.insert(messages).values({
         userId: ctx.session.user.id,
         message: input.message,
-        type: "user-sent",
-        status: "success",
+        type: ChatMessageType.UserSent,
+        status: ChatMessageStatus.Success,
       });
 
-      const fullConversation = await ctx.db.query.messages.findMany({
-        where: ({ userId, status }, { eq, and, notLike }) =>
-          and(eq(userId, ctx.session.user.id), notLike(status, "failed")),
-        orderBy: ({ createdAt }, { asc }) => asc(createdAt),
-      });
+      const [fullConversation, chatSettings] = await Promise.all([
+        getChatMessages(ctx),
+        getChatSettings(ctx),
+      ]);
 
       try {
         const llmResponse = await ctx.openai.chat.completions.create({
-          // TODO: would be nice to make this a configurable setting in the UI
-          model: "gpt-3.5-turbo",
+          model: chatSettings.model,
           messages: fullConversation.map((c) => ({
-            role: c.type === "user-sent" ? "user" : "assistant",
+            role: c.type === ChatMessageType.UserSent ? "user" : "assistant",
             content: c.message,
           })),
           max_tokens: 4096,
@@ -57,8 +54,8 @@ export const openAIChatRouter = createTRPCRouter({
         await ctx.db.insert(messages).values({
           userId: ctx.session.user.id,
           message: fullResponse,
-          type: "llm-response",
-          status: "success",
+          type: ChatMessageType.LLMResponse,
+          status: ChatMessageStatus.Success,
         });
       } catch (error) {
         await ctx.db.insert(messages).values({
@@ -67,11 +64,56 @@ export const openAIChatRouter = createTRPCRouter({
             error instanceof Error
               ? error.message
               : "Unexpected error retrieving LLM reponse",
-          type: "llm-response",
-          status: "failed",
+          type: ChatMessageType.LLMResponse,
+          status: ChatMessageStatus.Failed,
         });
 
         throw error;
       }
     }),
+
+  updateChatSettings: protectedProcedure
+    .input(z.object({ model: z.string().nullable() }))
+    .mutation(async ({ ctx, input }) => {
+      if (input.model) {
+        await ctx.db
+          .insert(chatSettings)
+          .values({ userId: ctx.session.user.id, model: input.model })
+          .onConflictDoUpdate({
+            target: chatSettings.userId,
+            set: { model: input.model },
+          });
+      }
+    }),
 });
+
+async function getChatMessages(ctx: ProtectedCtx) {
+  const chatMessages = await ctx.db.query.messages.findMany({
+    where: ({ userId }, { eq }) => eq(userId, ctx.session.user.id),
+    orderBy: ({ createdAt }, { asc }) => asc(createdAt),
+  });
+
+  return chatMessages.map<ChatMessage>((m) => ({
+    id: m.id,
+    // Drizzle doesn't support strict typing on columns. Cast to avoid handling throughout the app
+    type: m.type as ChatMessageType,
+    status: m.status as ChatMessageStatus,
+    message: m.message,
+  }));
+}
+
+async function getChatModels(ctx: ProtectedCtx) {
+  const { data: models } = await ctx.openai.models.list();
+  return models.filter((model) => model.owned_by === "openai");
+}
+
+async function getChatSettings(ctx: ProtectedCtx) {
+  const settings = await ctx.db.query.chatSettings.findFirst({
+    where: ({ userId }, { eq }) => eq(userId, ctx.session.user.id),
+  });
+
+  return {
+    model: DEFAULT_CHAT_MODEL,
+    ...settings,
+  };
+}

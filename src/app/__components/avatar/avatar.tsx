@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/lib/ui/dropdown-menu";
+import { SettingsMenuItem } from "./settings-menu-item";
 
 type Props = {
   imageUrl: string;
@@ -27,6 +28,7 @@ export function Avatar({ imageUrl, fallback }: Props) {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent>
+        <SettingsMenuItem />
         <DropdownMenuItem>
           <Link href={"/api/auth/signout"}>Sign out</Link>
         </DropdownMenuItem>
