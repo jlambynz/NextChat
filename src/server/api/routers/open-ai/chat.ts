@@ -81,11 +81,9 @@ export const openAIChatRouter = createTRPCRouter({
     }),
 
   clearChatHistory: protectedProcedure.mutation(async ({ ctx }) => {
-    const out = await ctx.db
+    await ctx.db
       .delete(messages)
       .where(eq(messages.userId, ctx.session.user.id));
-    console.log("chat cleared");
-    return out;
   }),
 });
 
