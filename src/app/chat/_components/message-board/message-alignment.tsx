@@ -1,18 +1,19 @@
+import { ChatMessageType } from "~/server/api/routers/open-ai/types";
 import { type RouterOutputs } from "~/trpc/react";
 
 type Props = {
-  type: RouterOutputs["openai"]["getMessages"][number]["type"];
+  type: RouterOutputs["openai"]["getChatMessages"][number]["type"];
   children: React.ReactNode;
 };
 
 export function MessageAlignment({ type, children }: Props) {
   function messageAlignment(
-    messageType: RouterOutputs["openai"]["getMessages"][number]["type"],
+    messageType: RouterOutputs["openai"]["getChatMessages"][number]["type"],
   ): string {
     switch (messageType) {
-      case "user-sent":
+      case ChatMessageType.UserSent:
         return "justify-end";
-      case "llm-response":
+      case ChatMessageType.LLMResponse:
         return "justify-start";
       default:
         return "justify-start";

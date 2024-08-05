@@ -6,6 +6,8 @@ import { type Metadata } from "next";
 import { TRPCReactProvider } from "~/trpc/react";
 import { TopNav } from "./__components/top-nav";
 import { ThemeProvider } from "~/lib/ui/theme-provider";
+import { SettingsDialog } from "./__components/settings-dialog/settings-dialog";
+import { Toaster } from "~/lib/ui/toaster";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -38,6 +40,8 @@ export default function RootLayout({
               <TopNav />
               {children}
             </main>
+            <SettingsDialog />
+            <Toaster />
           </ThemeProvider>
         </TRPCReactProvider>
       </body>

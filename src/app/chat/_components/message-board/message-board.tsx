@@ -8,11 +8,12 @@ import { type RouterOutputs } from "~/trpc/react";
 import { messageFromStreamingResponse } from "../utils";
 import { Message } from "./message";
 import { MessagePending } from "./message-pending";
+import { ChatMessageType } from "~/server/api/routers/open-ai/types";
 
 // TODO: container overflow causes very slight misalignment of content due to the scrollbar. Would be nice to detect and adjust for this
 
 type Props = {
-  messages: RouterOutputs["openai"]["getMessages"];
+  messages: RouterOutputs["openai"]["getChatMessages"];
   streamingResponse: string;
   responsePending: boolean;
 };
@@ -65,7 +66,9 @@ function MessageBoardComponent({
             <Message key={message.id} message={message} />
           ))}
 
-          {responsePending && <MessagePending type="llm-response" />}
+          {responsePending && (
+            <MessagePending type={ChatMessageType.LLMResponse} />
+          )}
 
           {streamingResponse && (
             <Message

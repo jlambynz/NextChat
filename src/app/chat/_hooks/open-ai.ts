@@ -16,16 +16,17 @@ export function useOpenAIChatMutation() {
     },
     onError: () => {
       setIsPendingResponse(false);
-      void utils.openai.getMessages.invalidate();
+      void utils.openai.getChatMessages.invalidate();
     },
     onSuccess: async (responseChunks) => {
       setIsProcessingResponse(true);
+
       for await (const chunk of responseChunks) {
         setIsPendingResponse(false);
         setStreamingResponse((cur) => cur + chunk);
       }
 
-      await utils.openai.getMessages.invalidate();
+      await utils.openai.getChatMessages.invalidate();
       setIsProcessingResponse(false);
       setStreamingResponse("");
     },
