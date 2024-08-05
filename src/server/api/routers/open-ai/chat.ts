@@ -2,7 +2,6 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../../trpc";
 import { chatSettings, messages } from "~/server/db/schema";
 import { type ChatMessage, ChatMessageStatus, ChatMessageType } from "./types";
-import { DEFAULT_CHAT_MODEL } from "./utils";
 import { type ProtectedCtx } from "../../types";
 
 export const openAIChatRouter = createTRPCRouter({
@@ -76,13 +75,7 @@ export const openAIChatRouter = createTRPCRouter({
     .input(z.object({ model: z.string().nullable() }))
     .mutation(async ({ ctx, input }) => {
       if (input.model) {
-        await ctx.db
-          .insert(chatSettings)
-          .values({ userId: ctx.session.user.id, model: input.model })
-          .onConflictDoUpdate({
-            target: chatSettings.userId,
-            set: { model: input.model },
-          });
+        await upsertChatModel(ctx, input.model);
       }
     }),
 });
@@ -104,7 +97,9 @@ async function getChatMessages(ctx: ProtectedCtx) {
 
 async function getChatModels(ctx: ProtectedCtx) {
   const { data: models } = await ctx.openai.models.list();
-  return models.filter((model) => model.owned_by === "openai");
+  return models
+    .filter((model) => model.owned_by === "openai")
+    .sort((m1, m2) => (m1.created < m2.created ? 1 : -1));
 }
 
 async function getChatSettings(ctx: ProtectedCtx) {
@@ -112,8 +107,27 @@ async function getChatSettings(ctx: ProtectedCtx) {
     where: ({ userId }, { eq }) => eq(userId, ctx.session.user.id),
   });
 
+  const model = settings?.model ?? (await getChatModels(ctx))[0]?.id;
+  if (!model) {
+    throw new Error("No models available");
+  }
+
+  if (!settings?.model) {
+    await upsertChatModel(ctx, model);
+  }
+
   return {
-    model: DEFAULT_CHAT_MODEL,
+    model,
     ...settings,
   };
+}
+
+async function upsertChatModel(ctx: ProtectedCtx, model: string) {
+  await ctx.db
+    .insert(chatSettings)
+    .values({ userId: ctx.session.user.id, model })
+    .onConflictDoUpdate({
+      target: chatSettings.userId,
+      set: { model },
+    });
 }
