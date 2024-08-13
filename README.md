@@ -4,7 +4,7 @@
 
 Personal project exploring [T3 stack](https://github.com/t3-oss/create-t3-app) (NextJS, tRPC, TypeScript, Tailwind, Drizzle, NextAuth) with Open AI integration to recreate a Chat GPT-like experience
 
-![asking question demonstration](public/demo/ask_a-question.gif)
+![asking question demonstration](public/demo/ask-a-question.gif)
 
 ## Prerequesites
 
