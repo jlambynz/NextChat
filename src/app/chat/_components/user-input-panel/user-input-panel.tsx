@@ -1,7 +1,7 @@
 "use client";
 
 import { SendHorizonal } from "lucide-react";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { memo, useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "~/lib/ui/button";
 import { MaxWidthContainer } from "~/lib/ui/max-width-container";
 import { Textarea } from "~/lib/ui/textarea";
@@ -11,7 +11,7 @@ type Props = {
   onSubmit: (message: string) => void;
 };
 
-export function UserInputPanel({ disabled = false, onSubmit }: Props) {
+function UserInputPanelComponent({ disabled = false, onSubmit }: Props) {
   const [text, setText] = useState<string>("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -68,3 +68,5 @@ export function UserInputPanel({ disabled = false, onSubmit }: Props) {
     </MaxWidthContainer>
   );
 }
+
+export const UserInputPanel = memo(UserInputPanelComponent);

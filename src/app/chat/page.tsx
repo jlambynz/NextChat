@@ -4,6 +4,7 @@ import { UserInputPanel } from "./_components/user-input-panel";
 import { MessageBoard } from "./_components/message-board/message-board";
 import { api } from "~/trpc/react";
 import { useOpenAIChatMutation } from "./_hooks/open-ai";
+import { useCallback } from "react";
 
 export default function Chat() {
   const { data: messages } = api.openai.getChatMessages.useQuery();
@@ -14,6 +15,13 @@ export default function Chat() {
     isProcessingResponse,
   } = useOpenAIChatMutation();
 
+  const handleMessageSubmit = useCallback(
+    (message: string) => {
+      sendMessage({ message });
+    },
+    [sendMessage],
+  );
+
   return (
     <>
       <MessageBoard
@@ -23,7 +31,7 @@ export default function Chat() {
       />
       <UserInputPanel
         disabled={isPendingResponse || isProcessingResponse}
-        onSubmit={(message) => sendMessage({ message })}
+        onSubmit={handleMessageSubmit}
       />
     </>
   );
